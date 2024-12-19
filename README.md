@@ -41,7 +41,14 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-Simple cli OTP app written in Rust. Mainly for self education and self use.
+This is a simple CLI file renaming app I wrote in Rust, mainly as a learning
+project and for my own use.
+I download a lot of files from the internet, and their file names are always a 
+mess—some have spaces, others use capital letters. For backing them up, I needed 
+a way to clean up and standardize the names. A bash script would have worked fine, 
+but since I also use Windows sometimes, I decided to build this app instead.
+I kept it as a CLI tool because it’s straightforward, works well in bash scripts, 
+and makes automating backups much easier.
 It uses several crates:
 - [https://crates.io/crates/clap](clap)
 - [https://crates.io/crates/walkdir](walkdir)
@@ -74,11 +81,15 @@ rename all files under a given dir and subdirs using rules:
 - lowercase filenames
 - spaces, () replaced by _
 
-fsren <path to dir>
+`fsren <path to dir>`
 
 rename all files under a given dir and subdirs using rules above +:
 - limit filename to n characters
-fsren <path to dir> -l <n>
+`fsren <path to dir> -l <n>`
+
+or
+
+`fsren <path to dir> --limit <n>`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -88,22 +99,20 @@ fsren <path to dir> -l <n>
 rename all files under a given dir and subdirs using rules above +:
 - encrypt filenames with AES and base32
 - key is randomly generated
-fsren <path to dir> -e
+`fsren <path to dir> -e`
 
 rename all files under a given dir and subdirs using rules above +:
 - encrypt files with AES and base32
 - with a provided key
-fsren <path to dir> -e -k <path to the key>
+`fsren <path to dir> -e -k <path to the key>`
 
 - generate random key in the given dir
-fsren -g <path to the dir>
+`fsren -g <path to the dir>`
 
 rename all files under a given dir and subdirs using rules above +:
 - decrypt files with AES and base32
 - with a provided key
-fsren <path to dir> -d -k <path to the key>
-Add new record -> creates a file "codex" in the current directory, 
-where alias and encrypted code is saved:
+`fsren <path to dir> -d -k <path to the key>`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
