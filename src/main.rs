@@ -58,7 +58,13 @@ fn rename_file(path: &Path, limit: i8) -> RenameResult {
     let filename = path.file_name().unwrap().to_str().unwrap();
     
     // Convert the filename to lowercase and replace spaces with underscores
-    let mut new_filename = filename.to_lowercase().replace(" ", "_");
+    // TODO: think about regex solution
+    // let re = Regex::new(r"[ ()]").unwrap();
+    // let replaced = re.replace_all((filename, "_"));
+    let mut new_filename = filename.to_lowercase()
+        .replace(" ", "_")
+        .replace("(", "_")
+        .replace(")", "_");
 
     // If the filename has an extension, split it and limit the base name length
     if let Some(extension) = path.extension() {
