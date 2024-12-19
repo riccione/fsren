@@ -7,7 +7,7 @@ use clap::{Parser, Arg};
 /*
 rename all files under a given dir and subdirs using rules:
 - lowercase filenames
-- spaces replaced by _
+- spaces, () replaced by _
 
 fsren <path to dir>
 
