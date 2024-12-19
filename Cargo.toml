@@ -3,4 +3,13 @@ name = "fsren"
 version = "0.1.0"
 edition = "2021"
 
+[profile.release]
+strip = true
+opt-level = "z" # optimize for size
+lto = true
+codegen-units = 1
+panic = "abort"
+
 [dependencies]
+clap = { version = "4.5.23", features = ["derive"] }
+walkdir = "2.5.0"
