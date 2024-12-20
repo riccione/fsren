@@ -61,6 +61,18 @@ It uses several crates:
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+### How to Build
+
+I could add actions and build it automatically, but this time I decided that it
+is not necessary.
+
+1. install Rust
+2. `git clone https://github.com/riccione/fsren`
+3. run `cargo build --release` -> this will do a magic and under
+   `target/release/` get `fsren`
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 <!-- GETTING STARTED -->
 ## Getting Started
 

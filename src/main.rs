@@ -1,8 +1,7 @@
-use std::env;
 use std::fs;
 use std::path::{Path};
 use walkdir::WalkDir;
-use clap::{Parser, Arg};
+use clap::{Parser};
 
 /*
 rename all files under a given dir and subdirs using rules:
