@@ -68,18 +68,7 @@ fn rename_file(path: &Path, limit: i8) -> RenameResult {
     let filename = path.file_name().unwrap().to_str().unwrap();
     
     // Convert the filename to lowercase and replace spaces with underscores
-    // TODO: think about regex solution
-    // let re = Regex::new(r"[ ()]").unwrap();
-    // let replaced = re.replace_all((filename, "_"));
-    /*
-    let mut new_filename = filename.to_lowercase()
-        .replace(" ", "_")
-        .replace("(", "_")
-        .replace(")", "_")
-        .replace("-", "_");
-    */
-    static RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"...").unwrap());
-    //let re_special = Regex::new(r"[ \-\(\)]").unwrap();
+    static RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"[ \-\(\)]").unwrap());
     let x = RE.replace_all(filename, "_");
     let mut new_filename = x.to_lowercase();
 
