@@ -2,11 +2,22 @@ use std::fs;
 use std::path::{Path};
 use walkdir::WalkDir;
 use clap::{Parser};
+use { 
+    once_cell::sync::Lazy,
+    regex::Regex,
+};
 
 /*
 rename all files under a given dir and subdirs using rules:
 - lowercase filenames
-- spaces, () replaced by _
+- spaces, (), - replaced by _
+TODO: camel case to snake case
+use regex::Regex;
+let re = Regex::new(r"([a-z])([A-Z])").unwrap();
+let t = re.replace_all(input, "${1}_${2}");
+let re_special = Regex::new(r"[ \-\(\)]").unwrap();
+let x = re_special.replace_all(&t, "_");
+x.to_lowercase();
 
 fsren <path to dir>
 
@@ -60,10 +71,17 @@ fn rename_file(path: &Path, limit: i8) -> RenameResult {
     // TODO: think about regex solution
     // let re = Regex::new(r"[ ()]").unwrap();
     // let replaced = re.replace_all((filename, "_"));
+    /*
     let mut new_filename = filename.to_lowercase()
         .replace(" ", "_")
         .replace("(", "_")
-        .replace(")", "_");
+        .replace(")", "_")
+        .replace("-", "_");
+    */
+    static RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"...").unwrap());
+    //let re_special = Regex::new(r"[ \-\(\)]").unwrap();
+    let x = RE.replace_all(filename, "_");
+    let mut new_filename = x.to_lowercase();
 
     // If the filename has an extension, split it and limit the base name length
     if let Some(extension) = path.extension() {
