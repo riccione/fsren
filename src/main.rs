@@ -98,6 +98,11 @@ fn rename_file(path: &Path, limit: i8) -> RenameResult {
     if filename != new_filename {
         let new_path = path.with_file_name(new_filename.clone()); // Clone here to avoid moving
 
+        // if file with a new filename already exists - skip file
+        if new_path.exists() {
+            return RenameResult::Error(format!("Error renaming file '{}', file exists!", filename));
+        }
+
         if let Err(e) = fs::rename(path, &new_path) {
             eprintln!("Error renaming file '{}': {}", filename, e);
             return RenameResult::Error(format!("Error renaming file '{}': {}", filename, e));
