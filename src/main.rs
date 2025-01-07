@@ -3,47 +3,22 @@ use std::path::{Path};
 use walkdir::WalkDir;
 use clap::{Parser};
 
-/*
-rename all files under a given dir and subdirs using rules:
-- lowercase filenames
-- spaces, () replaced by _
-
-fsren <path to dir>
-
-rename all files under a given dir and subdirs using rules above +:
-- limit filename to n characters
-fsren <path to dir> -l <n>
-
-TODO:
-rename all files under a given dir and subdirs using rules above +:
-- encrypt filenames with AES and base32
-- key is randomly generated
-fsren <path to dir> -e
-
-rename all files under a given dir and subdirs using rules above +:
-- encrypt files with AES and base32
-- with a provided key
-fsren <path to dir> -e -k <path to the key>
-
-- generate random key in the given dir
-fsren -g <path to the dir>
-
-rename all files under a given dir and subdirs using rules above +:
-- decrypt files with AES and base32
-- with a provided key
-fsren <path to dir> -d -k <path to the key>
-*/
-
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
 struct Cli {
-    /// Path to the directory
+    /// Required: path to the directory
     //#[arg(short, long)]
     dir_path: String,
 
-    /// Optional limit value (integer between 20 and 100)
+    /// Optional: limit value (integer between 20 and 100)
     #[arg(short = 'l', long = "limit", value_name = "LIMIT filename length", value_parser = clap::value_parser!(i8).range(20..=100))]
     limit: Option<i8>,
+
+    /// Optional: verbosity - shows list of renamed files
+    #[arg(short = 'v', 
+        long = "verbose", 
+        default_value_t = false)]
+    verbose: bool,
 }
 
 #[derive(Debug)]
@@ -53,7 +28,7 @@ enum RenameResult {
     Error(String), // Error with a message
 }
 
-fn rename_file(path: &Path, limit: i8) -> RenameResult {
+fn rename_file(path: &Path, limit: i8, v: bool) -> RenameResult {
     let filename = path.file_name().unwrap().to_str().unwrap();
     
     let mut new_filename: String = filename.to_lowercase().chars()
@@ -107,7 +82,9 @@ fn rename_file(path: &Path, limit: i8) -> RenameResult {
             eprintln!("Error renaming file '{}': {}", filename, e);
             return RenameResult::Error(format!("Error renaming file '{}': {}", filename, e));
         } else {
-            println!("Renamed: '{}' -> '{}'", filename, new_filename);
+            if v {
+                println!("Renamed: '{}' -> '{}'", filename, new_filename);
+            }
             return RenameResult::Success; // Success
         }
     }
@@ -115,7 +92,7 @@ fn rename_file(path: &Path, limit: i8) -> RenameResult {
     RenameResult::NoAction
 }
 
-fn process_directory(dir_path: &str, limit: i8) {
+fn process_directory(dir_path: &str, limit: i8, v: bool) {
     let mut counter = 0;
     // Walk the directory recursively using WalkDir
     for entry in WalkDir::new(dir_path).into_iter().filter_map(Result::ok) {
@@ -123,7 +100,7 @@ fn process_directory(dir_path: &str, limit: i8) {
 
         // Only rename files (not directories)
         if path.is_file() {
-            match rename_file(path, limit) {
+            match rename_file(path, limit, v) {
                 RenameResult::Success => counter += 1,
                 RenameResult::NoAction => counter -= 0,
                 RenameResult::Error(e) => eprintln!("Error: {}", e),
@@ -148,12 +125,13 @@ fn main() {
 
     let dir_path = &args.dir_path;
 
+    let v = args.verbose;
+
     // Check if the directory exists
     if !Path::new(dir_path).exists() {
         eprintln!("Error: The directory '{}' does not exist.", dir_path);
         std::process::exit(1);
     }
 
-    // Process the directory and its subdirectories
-    process_directory(dir_path, limit);
+    process_directory(dir_path, limit, v);
 }
