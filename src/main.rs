@@ -35,6 +35,8 @@ fn transform(s: &str) -> String {
                 '_'
             } else if c != '!' && 
                 c != ',' && 
+                c != '(' && 
+                c != ')' && 
                 c != '\'' && 
                 c != '\"' && 
                 c != '*' {
