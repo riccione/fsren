@@ -28,10 +28,8 @@ enum RenameResult {
     Error(String), // Error with a message
 }
 
-fn rename_file(path: &Path, limit: i8, v: bool) -> RenameResult {
-    let filename = path.file_name().unwrap().to_str().unwrap();
-    
-    let mut new_filename: String = filename.to_lowercase().chars()
+fn transform(s: &str) -> String {
+    s.to_lowercase().chars()
         .map(|c: char| {
             if c == ' ' || c == '-' {
                 '_'
@@ -46,7 +44,13 @@ fn rename_file(path: &Path, limit: i8, v: bool) -> RenameResult {
             }
         })
         .filter(|&c| c != '\0')
-        .collect();
+        .collect()
+}
+
+fn rename_file(path: &Path, limit: i8, v: bool) -> RenameResult {
+    let filename = path.file_name().unwrap().to_str().unwrap();
+    
+    let mut new_filename = transform(filename);
 
     // If the filename has an extension, split it and limit the base name length
     if let Some(extension) = path.extension() {
