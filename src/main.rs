@@ -56,14 +56,22 @@ enum RenameResult {
 fn rename_file(path: &Path, limit: i8) -> RenameResult {
     let filename = path.file_name().unwrap().to_str().unwrap();
     
-    // Convert the filename to lowercase and replace spaces with underscores
-    // TODO: think about regex solution
-    // let re = Regex::new(r"[ ()]").unwrap();
-    // let replaced = re.replace_all((filename, "_"));
-    let mut new_filename = filename.to_lowercase()
-        .replace(" ", "_")
-        .replace("(", "_")
-        .replace(")", "_");
+    let mut new_filename: String = filename.to_lowercase().chars()
+        .map(|c: char| {
+            if c == ' ' || c == '-' {
+                '_'
+            } else if c != '!' && 
+                c != ',' && 
+                c != '\'' && 
+                c != '\"' && 
+                c != '*' {
+                    c // keep other chars
+            } else {
+                '\0'
+            }
+        })
+        .filter(|&c| c != '\0')
+        .collect();
 
     // If the filename has an extension, split it and limit the base name length
     if let Some(extension) = path.extension() {
