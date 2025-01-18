@@ -19,6 +19,12 @@ struct Cli {
         long = "verbose", 
         default_value_t = false)]
     verbose: bool,
+    
+    /// Optional: dry-run - does not rename files, only shows what will be renamed
+    #[arg(short = 'd', 
+        long = "dryrun", 
+        default_value_t = false)]
+    dryrun: bool,
 }
 
 #[derive(Debug)]
@@ -49,7 +55,7 @@ fn transform(s: &str) -> String {
         .collect()
 }
 
-fn rename_file(path: &Path, limit: i8, v: bool) -> RenameResult {
+fn rename_file(path: &Path, limit: i8, v: bool, d: bool) -> RenameResult {
     let filename = path.file_name().unwrap().to_str().unwrap();
     
     let mut new_filename = transform(filename);
@@ -83,22 +89,26 @@ fn rename_file(path: &Path, limit: i8, v: bool) -> RenameResult {
         if new_path.exists() {
             return RenameResult::Error(format!("Error renaming file '{}', file exists!", filename));
         }
-
-        if let Err(e) = fs::rename(path, &new_path) {
-            eprintln!("Error renaming file '{}': {}", filename, e);
-            return RenameResult::Error(format!("Error renaming file '{}': {}", filename, e));
-        } else {
-            if v {
-                println!("Renamed: '{}' -> '{}'", filename, new_filename);
+        
+        if !d {
+            if let Err(e) = fs::rename(path, &new_path) {
+                eprintln!("Error renaming file '{}': {}", filename, e);
+                return RenameResult::Error(format!("Error renaming file '{}': {}", filename, e));
+            } else {
+                if v {
+                    println!("Renamed: '{}' -> '{}'", filename, new_filename);
+                }
+                return RenameResult::Success; // Success
             }
-            return RenameResult::Success; // Success
+        } else {
+            println!("Will be renamed: '{}' -> '{}'", filename, new_filename);
         }
     }
     // If no renaming happened, return -1
     RenameResult::NoAction
 }
 
-fn process_directory(dir_path: &str, limit: i8, v: bool) {
+fn process_directory(dir_path: &str, limit: i8, v: bool, d: bool) {
     let mut counter = 0;
     // Walk the directory recursively using WalkDir
     for entry in WalkDir::new(dir_path).into_iter().filter_map(Result::ok) {
@@ -106,7 +116,7 @@ fn process_directory(dir_path: &str, limit: i8, v: bool) {
 
         // Only rename files (not directories)
         if path.is_file() {
-            match rename_file(path, limit, v) {
+            match rename_file(path, limit, v, d) {
                 RenameResult::Success => counter += 1,
                 RenameResult::NoAction => counter -= 0,
                 RenameResult::Error(e) => eprintln!("Error: {}", e),
@@ -132,6 +142,7 @@ fn main() {
     let dir_path = &args.dir_path;
 
     let v = args.verbose;
+    let d = args.dryrun;
 
     // Check if the directory exists
     if !Path::new(dir_path).exists() {
@@ -139,5 +150,5 @@ fn main() {
         std::process::exit(1);
     }
 
-    process_directory(dir_path, limit, v);
+    process_directory(dir_path, limit, v, d);
 }

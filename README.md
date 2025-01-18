@@ -57,7 +57,7 @@ It uses several crates:
 
 ### Built With
 
-* RUST 1.81
+* RUST 1.84
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -103,11 +103,18 @@ or
 
 `fsren <path to dir> --limit <n>`
 
+verbosity (by default is false)
+`fsren <path to dir> -v`
+
+dry-run (by default is false)
+`fsren <path to dir> -d`
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ROADMAP -->
 ## Roadmap
 
+Not sure anymore that encryption is necessary... need to re-think
 rename all files under a given dir and subdirs using rules above +:
 - encrypt filenames with AES and base32
 - key is randomly generated
